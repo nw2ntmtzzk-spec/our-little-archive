@@ -973,6 +973,9 @@ window.showPage = function(pageId) {
     .getElementById(pageId)
     .classList.add("active");
 
+  if (pageId === "book") {
+  loadBook();
+}
   closeMenu();
 
 };
@@ -1248,6 +1251,92 @@ window.saveLoveToBook = async function(loveId) {
     alert(
       "Something went wrong while saving your love."
     );
+
+  }
+
+};
+  /* =========================
+   My Little Love Book
+========================= */
+
+window.loadBook = async function() {
+
+  const bookMessages =
+    document.getElementById("bookMessages");
+
+  bookMessages.innerHTML =
+    "Opening your little book... ♡";
+
+  const currentPerson =
+    document.body.dataset.person;
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        collection(db, "savedLove")
+      );
+
+    const savedMessages = [];
+
+    snapshot.forEach(function(doc) {
+
+      const item = doc.data();
+
+      if (item.person === currentPerson) {
+
+        savedMessages.push(item);
+
+      }
+
+    });
+
+    if (savedMessages.length === 0) {
+
+      bookMessages.innerHTML =
+        "Your little loves will live here ♡";
+
+      return;
+
+    }
+
+    savedMessages.sort(function(a, b) {
+
+      return new Date(a.savedAt) -
+             new Date(b.savedAt);
+
+    });
+
+    bookMessages.innerHTML =
+      savedMessages.map(function(love) {
+
+        const date =
+          new Date(love.date)
+            .toLocaleDateString("en-GB");
+
+        return `
+          <div class="love-card">
+
+            <p>
+              ${escapeHtml(love.message)}
+            </p>
+
+            <small>
+              — ${escapeHtml(love.from)}
+              · ${date}
+            </small>
+
+          </div>
+        `;
+
+      }).join("");
+
+  } catch (error) {
+
+    console.error(error);
+
+    bookMessages.innerHTML =
+      "Something went wrong while opening your book ♡";
 
   }
 
