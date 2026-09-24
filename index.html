@@ -765,138 +765,161 @@ object-position: center top;
   <!-- =========================
        JavaScript
   ========================== -->
+<script type="module">
 
-  <script>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-    let selectedPerson = null;
-
-
-    /* Check if this device remembers the user */
-
-    window.addEventListener(
-      "DOMContentLoaded",
-      function () {
-
-        const savedPerson =
-          localStorage.getItem("archivePerson");
-
-        if (
-          savedPerson === "Shiori" ||
-          savedPerson === "Kai"
-        ) {
-
-          enterArchive(savedPerson);
-
-        }
-
-      }
-    );
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
-    /* Choose Shiori or Kai */
+/* =========================
+   Firebase
+========================= */
 
-    function choosePerson(person) {
+const firebaseConfig = {
+  apiKey: "AIzaSyC1tXCcOAOSNNlDJel6xKIay9aiMO3eec8",
+  authDomain: "our-little-archive.firebaseapp.com",
+  projectId: "our-little-archive",
+  storageBucket: "our-little-archive.firebasestorage.app",
+  messagingSenderId: "257664532913",
+  appId: "1:257664532913:web:bf49736e88d90730ae3d90"
+};
 
-      selectedPerson = person;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-      document
-        .getElementById("rememberName")
-        .textContent = person;
+console.log("Firebase connected ♡");
 
-      document
-        .getElementById("rememberBox")
-        .style.display = "flex";
 
+/* =========================
+   Login
+========================= */
+
+let selectedPerson = null;
+
+
+window.addEventListener(
+  "DOMContentLoaded",
+  function () {
+
+    const savedPerson =
+      localStorage.getItem("archivePerson");
+
+    if (
+      savedPerson === "Shiori" ||
+      savedPerson === "Kai"
+    ) {
+      enterArchive(savedPerson);
     }
 
-
-    /* Yes = remember this person */
-
-    function rememberYes() {
-
-      localStorage.setItem(
-        "archivePerson",
-        selectedPerson
-      );
-
-      enterArchive(selectedPerson);
-
-    }
+  }
+);
 
 
-    /* No = ask again next time */
+window.choosePerson = function(person) {
 
-    function rememberNo() {
+  selectedPerson = person;
 
-      localStorage.removeItem(
-        "archivePerson"
-      );
+  document
+    .getElementById("rememberName")
+    .textContent = person;
 
-      enterArchive(selectedPerson);
+  document
+    .getElementById("rememberBox")
+    .style.display = "flex";
 
-    }
-
-
-    /* Enter the archive */
-
-    function enterArchive(person) {
-
-      document
-        .getElementById("loginScreen")
-        .style.display = "none";
-
-      document
-        .getElementById("rememberBox")
-        .style.display = "none";
-
-      document.body.dataset.person = person;
-
-    }
+};
 
 
-    /* Open menu */
+window.rememberYes = function() {
 
-    function openMenu() {
+  localStorage.setItem(
+    "archivePerson",
+    selectedPerson
+  );
 
-      document
-        .getElementById("sideMenu")
-        .classList.add("open");
+  enterArchive(selectedPerson);
 
-      document
-        .getElementById("menuOverlay")
-        .classList.add("open");
-
-    }
+};
 
 
-    /* Close menu */
+window.rememberNo = function() {
 
-    function closeMenu() {
+  localStorage.removeItem(
+    "archivePerson"
+  );
 
-      document
-        .getElementById("sideMenu")
-        .classList.remove("open");
+  enterArchive(selectedPerson);
 
-      document
-        .getElementById("menuOverlay")
-        .classList.remove("open");
-          /* Change person */
-
-    
-
-    }
+};
 
 
-   function changePerson() {
+function enterArchive(person) {
 
-      localStorage.removeItem("archivePerson");
+  document
+    .getElementById("loginScreen")
+    .style.display = "none";
 
-      location.reload();
+  document
+    .getElementById("rememberBox")
+    .style.display = "none";
 
-    } 
-    /* Switch pages */
+  document.body.dataset.person = person;
 
-  function showPage(pageId) {
+}
+
+
+/* =========================
+   Menu
+========================= */
+
+window.openMenu = function() {
+
+  document
+    .getElementById("sideMenu")
+    .classList.add("open");
+
+  document
+    .getElementById("menuOverlay")
+    .classList.add("open");
+
+};
+
+
+window.closeMenu = function() {
+
+  document
+    .getElementById("sideMenu")
+    .classList.remove("open");
+
+  document
+    .getElementById("menuOverlay")
+    .classList.remove("open");
+
+};
+
+
+window.changePerson = function() {
+
+  localStorage.removeItem("archivePerson");
+
+  location.reload();
+
+};
+
+
+/* =========================
+   Pages
+========================= */
+
+window.showPage = function(pageId) {
 
   document
     .querySelectorAll(".page")
@@ -906,7 +929,9 @@ object-position: center top;
 
     });
 
-  document.getElementById("home").style.display = "none";
+  document
+    .getElementById("home")
+    .style.display = "none";
 
   document
     .getElementById(pageId)
@@ -914,96 +939,198 @@ object-position: center top;
 
   closeMenu();
 
-}
+};
 
 
-function openLoveSend() {
+/* =========================
+   Send Love
+========================= */
 
-  const message = prompt("Write a little love for them ♡");
+window.openLoveSend = async function() {
 
-  if (!message || message.trim() === "") {
+  const message =
+    prompt("Write a little love for them ♡");
+
+  if (
+    !message ||
+    message.trim() === ""
+  ) {
     return;
   }
 
-  const loveMessages =
-    JSON.parse(localStorage.getItem("loveMessages")) || [];
+  const from =
+    document.body.dataset.person;
 
-  loveMessages.push({
-    from: document.body.dataset.person,
-    message: message.trim(),
-    date: new Date().toLocaleDateString("en-GB")
-  });
+  try {
 
-  localStorage.setItem(
-    "loveMessages",
-    JSON.stringify(loveMessages)
-  );
+    await addDoc(
+      collection(db, "loveMessages"),
+      {
+        from: from,
+        message: message.trim(),
+        date: new Date().toISOString()
+      }
+    );
 
-  alert("Your little love has been sent ♡");
+    alert("Your little love has been sent ♡");
 
-}
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Something went wrong while sending your love."
+    );
+
+  }
+
+};
 
 
-function showLoveMessage() {
+/* =========================
+   Show Love
+========================= */
 
-  const loveMessages =
-    JSON.parse(localStorage.getItem("loveMessages")) || [];
+window.showLoveMessage = async function() {
 
   const messageBox =
     document.getElementById("loveMessage");
 
-  if (loveMessages.length === 0) {
-
-    messageBox.innerHTML =
-      "No little love yet ♡";
-
-    return;
-
-  }
+  messageBox.innerHTML =
+    "Loading your little love... ♡";
 
   const currentPerson =
     document.body.dataset.person;
 
-  const receivedMessages =
-    loveMessages.filter(function(item) {
+  try {
 
-      return item.from !== currentPerson;
+    const loveQuery =
+      query(
+        collection(db, "loveMessages"),
+        orderBy("date", "asc")
+      );
+
+    const snapshot =
+      await getDocs(loveQuery);
+
+    const receivedMessages =
+      [];
+
+    snapshot.forEach(function(doc) {
+
+      const item = doc.data();
+
+      if (
+        item.from !== currentPerson
+      ) {
+
+        receivedMessages.push({
+          id: doc.id,
+          ...item
+        });
+
+      }
 
     });
 
-  if (receivedMessages.length === 0) {
+
+    if (
+      receivedMessages.length === 0
+    ) {
+
+      messageBox.innerHTML =
+        "No little love yet ♡";
+
+      return;
+
+    }
+
+
+    /*
+      For now:
+      show messages in order.
+      After the last one,
+      start from the first again.
+    */
+
+    let currentIndex =
+      Number(
+        localStorage.getItem(
+          "loveIndex_" + currentPerson
+        )
+      ) || 0;
+
+
+    if (
+      currentIndex >=
+      receivedMessages.length
+    ) {
+      currentIndex = 0;
+    }
+
+
+    const love =
+      receivedMessages[currentIndex];
+
+
+    localStorage.setItem(
+      "loveIndex_" + currentPerson,
+      (
+        currentIndex + 1
+      ) %
+      receivedMessages.length
+    );
+
+
+    const date =
+      new Date(love.date)
+        .toLocaleDateString(
+          "en-GB"
+        );
+
+
+    messageBox.innerHTML = `
+      <div class="love-card">
+
+        <p>
+          ${escapeHtml(love.message)}
+        </p>
+
+        <small>
+          — ${escapeHtml(love.from)}
+          · ${date}
+        </small>
+
+      </div>
+    `;
+
+  } catch (error) {
+
+    console.error(error);
 
     messageBox.innerHTML =
-      "No little love yet ♡";
-
-    return;
+      "Something went wrong ♡";
 
   }
 
-  const randomMessage =
-    receivedMessages[
-      Math.floor(
-        Math.random() * receivedMessages.length
-      )
-    ];
-
-  messageBox.innerHTML = `
-  <div class="love-card">
-    <p>${randomMessage.message}</p>
-    <small>
-      — ${randomMessage.from}
-      · ${randomMessage.date}
-    </small>
-  </div>
-`;
+};
 
 
+/* =========================
+   Safe text
+========================= */
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
 
 }
 
-      
-
-  </script>
-
+</script>
 </body>
 </html>
