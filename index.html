@@ -1068,7 +1068,30 @@ window.showLoveMessage = async function() {
       }
 
     });
+    // すでにBookに保存したLoveを取得
+    const savedQuery =
+      query(
+        collection(db, "savedLove")
+      );
 
+    const savedSnapshot =
+      await getDocs(savedQuery);
+
+    const savedLoveIds = [];
+
+    savedSnapshot.forEach(function(doc) {
+      const item = doc.data();
+
+      if (item.person === currentPerson) {
+        savedLoveIds.push(item.loveId);
+      }
+    });
+
+    // Bookに保存済みのLoveを除外
+    const unsavedMessages =
+      receivedMessages.filter(function(love) {
+        return !savedLoveIds.includes(love.id);
+      });
 
     if (
       receivedMessages.length === 0
@@ -1099,14 +1122,14 @@ window.showLoveMessage = async function() {
 
     if (
       currentIndex >=
-      receivedMessages.length
+      unsavedMessages.length
     ) {
       currentIndex = 0;
     }
 
 
     const love =
-      receivedMessages[currentIndex];
+      unsavedMessages[currentIndex];
 
 
     localStorage.setItem(
@@ -1114,7 +1137,7 @@ window.showLoveMessage = async function() {
       (
         currentIndex + 1
       ) %
-      receivedMessages.length
+      unsavedMessages.length
     );
 
 
