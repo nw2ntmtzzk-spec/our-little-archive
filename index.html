@@ -622,6 +622,9 @@ object-position: center top;
       Archive
 
     </button>
+    <button class="menu-item" onclick="changePerson()">
+  ♡ Change person
+</button>
 
   </nav>
 
@@ -848,10 +851,20 @@ object-position: center top;
       document
         .getElementById("menuOverlay")
         .classList.remove("open");
+          /* Change person */
+
+    
 
     }
 
 
+   function changePerson() {
+
+      localStorage.removeItem("archivePerson");
+
+      location.reload();
+
+    } 
     /* Switch pages */
 
     function showPage(pageId) {
