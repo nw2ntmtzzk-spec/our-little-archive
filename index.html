@@ -1,1 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff8f5">
 
+  <title>Our Little Archive ♡</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, serif;
+      background: #fff8f5;
+      color: #4a3b3b;
+      overflow-x: hidden;
+    }
+
+    /* =========================
+       Header
+    ========================= */
+
+    header {
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 22px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: normal;
+    }
+
+    /* Menu button */
+
+    .menu-button {
+      border: none;
+      background: transparent;
+      font-size: 28px;
+      cursor: pointer;
+      color: #4a3b3b;
+      padding: 8px;
+    }
+
+    /* =========================
+       Home
+    ========================= */
+
+    .home {
+      min-height: calc(100vh - 70px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .home-content {
+      max-width: 500px;
+    }
+
+    .home h1 {
+      font-size: 42px;
+      font-weight: normal;
+      margin: 0 0 15px;
+    }
+
+    .home p {
+      font-size: 16px;
+      color: #8a7070;
+      line-height: 1.8;
+    }
+
+    /* =========================
+       Side Menu
+    ========================= */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(50, 30, 30, 0.18);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 10;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(320px, 85vw);
+      height: 100vh;
+      background: #fffdfb;
+      padding: 30px 25px;
+      box-shadow: -5px 0 25px rgba(60, 40, 40, 0.12);
+      transform: translateX(100%);
+      transition: transform 0.35s ease;
+      z-index: 20;
+    }
+
+    .side-menu.open {
+      transform: translateX(0);
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .menu-title {
+      font-size: 22px;
+    }
+
+    .close-button {
+      border: none;
+      background: transparent;
+      font-size: 25px;
+      cursor: pointer;
+      color: #4a3b3b;
+    }
+
+    .menu-item {
+      display: block;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      padding: 18px 5px;
+      font-family: Georgia, serif;
+      font-size: 19px;
+      color: #4a3b3b;
+      cursor: pointer;
+      border-bottom: 1px solid #eee2df;
+    }
+
+    .menu-item span {
+      margin-right: 12px;
+    }
+
+    .menu-item:hover {
+      background: #fff8f5;
+    }
+
+    /* =========================
+       Pages
+    ========================= */
+
+    .page {
+      display: none;
+      padding: 50px 25px;
+      max-width: 700px;
+      margin: auto;
+      min-height: calc(100vh - 70px);
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page h2 {
+      font-size: 32px;
+      font-weight: normal;
+      margin-bottom: 10px;
+    }
+
+    .page-description {
+      color: #8a7070;
+      line-height: 1.7;
+      margin-bottom: 35px;
+    }
+
+    /* =========================
+       Archive
+    ========================= */
+
+    .memory-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 15px rgba(80, 50, 50, 0.07);
+    }
+
+    .memory-date {
+      font-size: 13px;
+      color: #9a8585;
+      margin-bottom: 7px;
+    }
+
+    .memory-title {
+      font-size: 20px;
+    }
+
+    .memory-description {
+      font-size: 14px;
+      color: #8a7070;
+      margin-top: 7px;
+    }
+
+    /* =========================
+       Coming Soon
+    ========================= */
+
+    .coming-soon {
+      text-align: center;
+      margin-top: 80px;
+      color: #9a8585;
+    }
+
+    /* =========================
+       Mobile
+    ========================= */
+
+    @media (max-width: 500px) {
+
+      .home h1 {
+        font-size: 34px;
+      }
+
+      .logo {
+        font-size: 17px;
+      }
+
+      .page {
+        padding: 35px 20px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       Header
+  ========================= -->
+
+  <header>
+
+    <div class="logo">
+      Our Little Archive ♡
+    </div>
+
+    <button
+      class="menu-button"
+      onclick="openMenu()"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- =========================
+       Home
+  ========================= -->
+
+  <main id="home" class="home">
+
+    <div class="home-content">
+
+      <h1>
+        Our Little Archive ♡
+      </h1>
+
+      <p>
+        A little place for us.<br>
+        For everything we want to remember.
+      </p>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================
+       Side Menu
+  ========================= -->
+
+  <div
+    id="menuOverlay"
+    class="menu-overlay"
+    onclick="closeMenu()"
+  ></div>
+
+
+  <nav
+    id="sideMenu"
+    class="side-menu"
+  >
+
+    <div class="menu-header">
+
+      <div class="menu-title">
+        Menu
+      </div>
+
+      <button
+        class="close-button"
+        onclick="closeMenu()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <button
+      class="menu-item"
+      onclick="showPage('love')"
+    >
+      <span>💗</span>
+      Love
+    </button>
+
+
+    <button
+      class="menu-item"
+      onclick="showPage('talk')"
+    >
+      <span>🌱</span>
+      Talk
+    </button>
+
+
+    <button
+      class="menu-item"
+      onclick="showPage('archive')"
+    >
+      <span>📖</span>
+      Archive
+    </button>
+
+  </nav>
+
+
+  <!-- =========================
+       Love Page
+  ========================= -->
+
+  <section
+    id="love"
+    class="page"
+  >
+
+    <h2>💗 Love</h2>
+
+    <p class="page-description">
+      Little things we want each other to know.
+    </p>
+
+    <div class="coming-soon">
+      This little place is still growing ♡
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       Talk Page
+  ========================= -->
+
+  <section
+    id="talk"
+    class="page"
+  >
+
+    <h2>🌱 Talk</h2>
+
+    <p class="page-description">
+      Things that are sometimes hard to say.
+      <br>
+      Say them when you're ready.
+    </p>
+
+    <div class="coming-soon">
+      A safe place for us to talk.
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       Archive Page
+  ========================= -->
+
+  <section
+    id="archive"
+    class="page"
+  >
+
+    <h2>📖 Archive</h2>
+
+    <p class="page-description">
+      Our memories, kept here.
+    </p>
+
+
+    <!-- 4 Month Memory -->
+
+    <a
+      class="memory-card"
+      href="https://
+nw2ntmtzzk-spec.github.io/4-month-anniversary/"
+      target="_blank"
+    >
+
+      <div class="memory-date">
+        23 September 2026
+      </div>
+
+      <div class="memory-title">
+        💕 4 Months
+      </div>
+
+      <div class="memory-description">
+        A little website made for us.
+      </div>
+
+    </a>
+
+
+    <!-- Future memories -->
+
+    <div class="coming-soon">
+      More memories will be added here ♡
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       JavaScript
+  ========================= -->
+
+  <script>
+
+    function openMenu() {
+
+      document
+        .getElementById("sideMenu")
+        .classList.add("open");
+
+      document
+        .getElementById("menuOverlay")
+        .classList.add("open");
+
+    }
+
+
+    function closeMenu() {
+
+      document
+        .getElementById("sideMenu")
+        .classList.remove("open");
+
+      document
+        .getElementById("menuOverlay")
+        .classList.remove("open");
+
+    }
+
+
+    function showPage(pageId) {
+
+      // Hide all pages
+
+      document
+        .querySelectorAll(".page")
+        .forEach(function(page) {
+
+          page.classList.remove("active");
+
+        });
+
+
+      // Hide home
+
+      document
+        .getElementById("home")
+        .style.display = "none";
+
+
+      // Show selected page
+
+      document
+        .getElementById(pageId)
+        .classList.add("active");
+
+
+      // Close menu
+
+      closeMenu();
+
+    }
+
+  </script>
+
+</body>
+</html>
