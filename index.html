@@ -875,16 +875,28 @@ object-position: center top;
     } 
     /* Switch pages */
 
-    function showPage(pageId) {
+  function showPage(pageId) {
 
-      document
-        .querySelectorAll(".page")
-        .forEach(function(page) {
+  document
+    .querySelectorAll(".page")
+    .forEach(function(page) {
 
-          page.classList.remove("active");
+      page.classList.remove("active");
 
-        });
-      function openLoveSend() {
+    });
+
+  document.getElementById("home").style.display = "none";
+
+  document
+    .getElementById(pageId)
+    .classList.add("active");
+
+  closeMenu();
+
+}
+
+
+function openLoveSend() {
 
   const message = prompt("Write a little love for them ♡");
 
