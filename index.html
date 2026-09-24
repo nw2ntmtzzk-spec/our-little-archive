@@ -1040,6 +1040,7 @@ window.showLoveMessage = async function() {
 
   try {
 
+    // Love messages
     const loveQuery =
       query(
         collection(db, "loveMessages"),
@@ -1049,16 +1050,13 @@ window.showLoveMessage = async function() {
     const snapshot =
       await getDocs(loveQuery);
 
-    const receivedMessages =
-      [];
+    const receivedMessages = [];
 
     snapshot.forEach(function(doc) {
 
       const item = doc.data();
 
-      if (
-        item.from !== currentPerson
-      ) {
+      if (item.from !== currentPerson) {
 
         receivedMessages.push({
           id: doc.id,
@@ -1068,34 +1066,38 @@ window.showLoveMessage = async function() {
       }
 
     });
-    // すでにBookに保存したLoveを取得
-    const savedQuery =
-      query(
+
+
+    // Saved Love
+    const savedSnapshot =
+      await getDocs(
         collection(db, "savedLove")
       );
-
-    const savedSnapshot =
-      await getDocs(savedQuery);
 
     const savedLoveIds = [];
 
     savedSnapshot.forEach(function(doc) {
+
       const item = doc.data();
 
       if (item.person === currentPerson) {
         savedLoveIds.push(item.loveId);
       }
+
     });
 
-    // Bookに保存済みのLoveを除外
+
+    // 保存済みを除外
     const unsavedMessages =
       receivedMessages.filter(function(love) {
+
         return !savedLoveIds.includes(love.id);
+
       });
 
-    if (
-      receivedMessages.length === 0
-    ) {
+
+    // まだ受け取っていないLoveがない場合
+    if (unsavedMessages.length === 0) {
 
       messageBox.innerHTML =
         "No little love yet ♡";
@@ -1105,13 +1107,7 @@ window.showLoveMessage = async function() {
     }
 
 
-    /*
-      For now:
-      show messages in order.
-      After the last one,
-      start from the first again.
-    */
-
+    // 順番に表示
     let currentIndex =
       Number(
         localStorage.getItem(
@@ -1124,7 +1120,9 @@ window.showLoveMessage = async function() {
       currentIndex >=
       unsavedMessages.length
     ) {
+
       currentIndex = 0;
+
     }
 
 
@@ -1134,43 +1132,38 @@ window.showLoveMessage = async function() {
 
     localStorage.setItem(
       "loveIndex_" + currentPerson,
-      (
-        currentIndex + 1
-      ) %
-      unsavedMessages.length
+      currentIndex + 1
     );
 
 
     const date =
       new Date(love.date)
-        .toLocaleDateString(
-          "en-GB"
-        );
+        .toLocaleDateString("en-GB");
 
 
     messageBox.innerHTML = `
-  <div class="love-card">
+      <div class="love-card">
 
-    <p>
-      ${escapeHtml(love.message)}
-    </p>
+        <p>
+          ${escapeHtml(love.message)}
+        </p>
 
-    <small>
-      — ${escapeHtml(love.from)}
-      · ${date}
-    </small>
+        <small>
+          — ${escapeHtml(love.from)}
+          · ${date}
+        </small>
 
-    <br><br>
+        <br><br>
 
-    <button
-      onclick="saveLoveToBook('${love.id}')"
-      class="book-save-button"
-    >
-      📕 Keep this in my book
-    </button>
+        <button
+          onclick="saveLoveToBook('${love.id}')"
+          class="book-save-button"
+        >
+          📕 Keep this in my book
+        </button>
 
-  </div>
-`;
+      </div>
+    `;
 
   } catch (error) {
 
@@ -1182,8 +1175,6 @@ window.showLoveMessage = async function() {
   }
 
 };
-
-
 /* =========================
    Safe text
 ========================= */
