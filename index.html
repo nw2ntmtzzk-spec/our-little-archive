@@ -1175,7 +1175,7 @@ function escapeHtml(text) {
   return div.innerHTML;
 
 }
-  /* =========================
+ /* =========================
    Save Love to My Little Love Book
 ========================= */
 
@@ -1186,14 +1186,8 @@ window.saveLoveToBook = async function(loveId) {
 
   try {
 
-    // Love messageを取得
-    const loveQuery =
-      query(
-        collection(db, "loveMessages")
-      );
-
     const snapshot =
-      await getDocs(loveQuery);
+      await getDocs(collection(db, "loveMessages"));
 
     let love = null;
 
@@ -1226,7 +1220,12 @@ window.saveLoveToBook = async function(loveId) {
       }
     );
 
-    alert("Saved to My Little Love Book 📕♡");
+    // Love画面から消す
+    const messageBox =
+      document.getElementById("loveMessage");
+
+    messageBox.innerHTML =
+      "Saved to My Little Love Book 📕♡";
 
   } catch (error) {
 
@@ -1239,7 +1238,6 @@ window.saveLoveToBook = async function(loveId) {
   }
 
 };
-
 </script>
 </body>
 </html>
