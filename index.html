@@ -644,7 +644,7 @@ object-position: center top;
 >
 
   <span>
-    📓
+    📕
   </span>
 
   My Little Love Book
@@ -1126,19 +1126,28 @@ window.showLoveMessage = async function() {
 
 
     messageBox.innerHTML = `
-      <div class="love-card">
+  <div class="love-card">
 
-        <p>
-          ${escapeHtml(love.message)}
-        </p>
+    <p>
+      ${escapeHtml(love.message)}
+    </p>
 
-        <small>
-          — ${escapeHtml(love.from)}
-          · ${date}
-        </small>
+    <small>
+      — ${escapeHtml(love.from)}
+      · ${date}
+    </small>
 
-      </div>
-    `;
+    <br><br>
+
+    <button
+      onclick="saveLoveToBook('${love.id}')"
+      class="book-save-button"
+    >
+      📕 Keep this in my book
+    </button>
+
+  </div>
+`;
 
   } catch (error) {
 
@@ -1166,6 +1175,70 @@ function escapeHtml(text) {
   return div.innerHTML;
 
 }
+  /* =========================
+   Save Love to My Little Love Book
+========================= */
+
+window.saveLoveToBook = async function(loveId) {
+
+  const currentPerson =
+    document.body.dataset.person;
+
+  try {
+
+    // Love messageを取得
+    const loveQuery =
+      query(
+        collection(db, "loveMessages")
+      );
+
+    const snapshot =
+      await getDocs(loveQuery);
+
+    let love = null;
+
+    snapshot.forEach(function(doc) {
+
+      if (doc.id === loveId) {
+        love = {
+          id: doc.id,
+          ...doc.data()
+        };
+      }
+
+    });
+
+    if (!love) {
+      alert("This little love could not be found ♡");
+      return;
+    }
+
+    // My Little Love Bookに保存
+    await addDoc(
+      collection(db, "savedLove"),
+      {
+        person: currentPerson,
+        loveId: love.id,
+        from: love.from,
+        message: love.message,
+        date: love.date,
+        savedAt: new Date().toISOString()
+      }
+    );
+
+    alert("Saved to My Little Love Book 📕♡");
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Something went wrong while saving your love."
+    );
+
+  }
+
+};
 
 </script>
 </body>
