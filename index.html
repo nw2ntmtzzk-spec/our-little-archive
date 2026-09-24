@@ -903,12 +903,83 @@ function openLoveSend() {
 
   const message = prompt("Write a little love for them ♡");
 
-  if (message && message.trim() !== "") {
-    alert("Your little love has been sent ♡");
+  if (!message || message.trim() === "") {
+    return;
   }
+
+  const loveMessages =
+    JSON.parse(localStorage.getItem("loveMessages")) || [];
+
+  loveMessages.push({
+    from: document.body.dataset.person,
+    message: message.trim(),
+    date: new Date().toLocaleDateString("en-GB")
+  });
+
+  localStorage.setItem(
+    "loveMessages",
+    JSON.stringify(loveMessages)
+  );
+
+  alert("Your little love has been sent ♡");
 
 }
 
+
+function showLoveMessage() {
+
+  const loveMessages =
+    JSON.parse(localStorage.getItem("loveMessages")) || [];
+
+  const messageBox =
+    document.getElementById("loveMessage");
+
+  if (loveMessages.length === 0) {
+
+    messageBox.innerHTML =
+      "No little love yet ♡";
+
+    return;
+
+  }
+
+  const currentPerson =
+    document.body.dataset.person;
+
+  const receivedMessages =
+    loveMessages.filter(function(item) {
+
+      return item.from !== currentPerson;
+
+    });
+
+  if (receivedMessages.length === 0) {
+
+    messageBox.innerHTML =
+      "No little love yet ♡";
+
+    return;
+
+  }
+
+  const randomMessage =
+    receivedMessages[
+      Math.floor(
+        Math.random() * receivedMessages.length
+      )
+    ];
+
+  messageBox.innerHTML = `
+    <div class="love-card">
+      <p>${randomMessage.message}</p>
+      <small>
+        — ${randomMessage.from}
+        · ${randomMessage.date}
+      </small>
+    </div>
+  `;
+
+}
 
       
 
