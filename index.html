@@ -44,80 +44,111 @@
   margin-top: 25px;
 }
 
-#bookMessages .love-card {
-  background: #f8efd9;
-  border: 1px solid rgba(100, 70, 35, 0.2);
-  border-radius: 3px;
-  padding: 25px;
-  font-family: Georgia, serif;
-
+#bookMessages {
   position: relative;
-  opacity: 1;
-  transform: none;
+  overflow: hidden;
+  min-height: 360px;
+  perspective: 1200px;
+  touch-action: pan-y;
+}
 
-  animation: pageTurn 0.8s cubic-bezier(.22,.61,.36,1);
-
+.diary-page {
+  position: relative;
+  min-height: 360px;
+  background:
+    linear-gradient(
+      to right,
+      #d8bd91 0%,
+      #f3e4c4 6%,
+      #f8efd9 14%,
+      #f8efd9 100%
+    );
+  border: 1px solid #b89b70;
+  border-radius: 4px;
+  padding: 35px 45px 35px 35px;
   box-shadow:
-    2px 3px 8px rgba(60, 40, 20, 0.15),
-    inset 0 0 25px rgba(120, 90, 50, 0.08);
+    8px 10px 20px rgba(60, 40, 20, 0.22),
+    inset 12px 0 18px rgba(80, 50, 25, 0.12);
+  animation: diaryPageIn 0.6s ease;
 }
 
-@keyframes pageTurn {
-  0% {
-    opacity: 0;
-    transform: translateX(100%) rotateY(8deg);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0) rotateY(0);
-  }
+.diary-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
-    #bookMessages .love-card::after {
-  content: "";
+
+.diary-message {
+  padding: 18px 10px;
+  border-bottom: 1px solid rgba(100, 70, 35, 0.18);
+  font-family: Georgia, serif;
+  color: #4d3828;
+}
+
+.diary-message:last-child {
+  border-bottom: none;
+}
+
+.diary-message p {
+  margin: 0 0 10px;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.diary-message small {
+  color: #8a7258;
+  font-size: 12px;
+}
+
+.page-corner {
   position: absolute;
   right: 0;
-  top: 0;
-
-  width: 28px;
-  height: 28px;
-
-  background: linear-gradient(
-    135deg,
-    #d8bd91 0%,
-    #f3e4c4 45%,
-    #fff8e8 46%,
-    #fff8e8 100%
-  );
-
-  clip-path: polygon(100% 0, 0 0, 100% 100%);
-
-  box-shadow: -2px 2px 4px rgba(60, 40, 20, 0.15);
+  bottom: 0;
+  width: 42px;
+  height: 42px;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 49%,
+      #d8bd91 50%,
+      #f3e4c4 51%
+    );
+  box-shadow:
+    -2px -2px 5px rgba(60, 40, 20, 0.12);
+  pointer-events: none;
 }
 
-/* 古い紙っぽいページ */
-#bookMessages .love-card::before {
-  content: "♡";
-  display: block;
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 15px;
-  opacity: 0.45;
-} .love-card {
-  opacity: 0;
-  transform: translateY(15px);
-  animation: loveAppear 1s ease forwards;
+.page-hint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  font-family: Georgia, serif;
+  font-size: 11px;
+  color: #9b8062;
+  animation: swipeHint 1.8s ease-in-out infinite;
 }
 
-@keyframes loveAppear {
+@keyframes diaryPageIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateX(40px) rotateY(-8deg);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+@keyframes swipeHint {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.45;
+  }
+
+  50% {
+    transform: translateX(5px);
+    opacity: 0.9;
   }
 }
     * {
@@ -1428,7 +1459,7 @@ window.loadBook = async function() {
     document.getElementById("bookMessages");
 
   bookMessages.innerHTML =
-    "Opening your little book... ♡";
+    "Opening your little diary... ♡";
 
   const currentPerson =
     document.body.dataset.person;
@@ -1448,7 +1479,10 @@ window.loadBook = async function() {
 
       if (item.person === currentPerson) {
 
-        savedMessages.push(item);
+        savedMessages.push({
+          id: doc.id,
+          ...item
+        });
 
       }
 
@@ -1470,44 +1504,155 @@ window.loadBook = async function() {
 
     });
 
-    bookMessages.innerHTML =
-  savedMessages.map(function(love) {
+    /* 3つずつページに分ける */
 
-    const date =
-      new Date(love.date)
-        .toLocaleDateString("en-GB");
+    const pages = [];
 
-    return `
-      <div class="love-card">
+    for (
+      let i = 0;
+      i < savedMessages.length;
+      i += 3
+    ) {
 
-        <p>
-          ${escapeHtml(love.message)}
-        </p>
+      pages.push(
+        savedMessages.slice(i, i + 3)
+      );
 
-        <small>
-          — ${escapeHtml(love.from)}
-          · ${date}
-        </small>
+    }
 
-        <br><br>
+    let currentPage = 0;
 
-        <button
-          onclick="deleteLoveFromBook('${love.loveId}')"
-          class="book-delete-button"
-        >
-          🗑️ Remove
-        </button>
 
-      </div>
-    `;
+    /* ページを表示する */
 
-  }).join("");
+    function renderPage() {
+
+      const page =
+        pages[currentPage];
+
+      bookMessages.innerHTML = `
+
+        <div class="diary-page">
+
+          <div class="diary-messages">
+
+            ${page.map(function(love) {
+
+              const date =
+                new Date(love.date)
+                  .toLocaleDateString("en-GB");
+
+              return `
+
+                <div class="diary-message">
+
+                  <p>
+                    ${escapeHtml(love.message)}
+                  </p>
+
+                  <small>
+                    — ${escapeHtml(love.from)}
+                    · ${date}
+                  </small>
+
+                  <br><br>
+
+                  <button
+                    onclick="deleteLoveFromBook('${love.loveId}')"
+                    class="book-delete-button"
+                  >
+                    🗑️ Remove
+                  </button>
+
+                </div>
+
+              `;
+
+            }).join("")}
+
+          </div>
+
+
+          <!-- ページ右下の折り目 -->
+
+          <div class="page-corner"></div>
+
+
+          ${
+            currentPage < pages.length - 1
+              ? `<div class="page-hint">Swipe →</div>`
+              : ""
+          }
+
+        </div>
+
+      `;
+
+    }
+
+
+    renderPage();
+
+
+    /* スワイプ */
+
+    let startX = 0;
+
+    bookMessages.ontouchstart =
+      function(e) {
+
+        startX =
+          e.touches[0].clientX;
+
+      };
+
+
+    bookMessages.ontouchend =
+      function(e) {
+
+        const endX =
+          e.changedTouches[0].clientX;
+
+        const distance =
+          startX - endX;
+
+
+        /* 左スワイプ → 次のページ */
+
+        if (
+          distance > 50 &&
+          currentPage < pages.length - 1
+        ) {
+
+          currentPage++;
+
+          renderPage();
+
+        }
+
+
+        /* 右スワイプ → 前のページ */
+
+        if (
+          distance < -50 &&
+          currentPage > 0
+        ) {
+
+          currentPage--;
+
+          renderPage();
+
+        }
+
+      };
+
+
   } catch (error) {
 
     console.error(error);
 
     bookMessages.innerHTML =
-      "Something went wrong while opening your book ♡";
+      "Something went wrong while opening your diary ♡";
 
   }
 
