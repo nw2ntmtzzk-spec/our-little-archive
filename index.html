@@ -101,8 +101,9 @@
 ========================= */
 
 #book {
-  position: relative;
-
+  position: sticky;
+  top: 20px;
+  
   background:
     linear-gradient(
       to right,
@@ -124,26 +125,7 @@
   overflow: hidden;
 }
 
-#book::after {
-  content: "";
 
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-
-  width: 2px;
-
-  background:
-    linear-gradient(
-      to right,
-      transparent,
-      rgba(90, 60, 30, 0.22),
-      transparent
-    );
-
-  pointer-events: none;
-}
 
 #bookMessages {
   position: relative;
