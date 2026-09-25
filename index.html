@@ -49,10 +49,50 @@
   border: 1px solid rgba(100, 70, 35, 0.2);
   border-radius: 3px;
   padding: 25px;
-  box-shadow:
-    2px 3px 8px rgba(60, 40, 20, 0.15);
-
   font-family: Georgia, serif;
+
+  position: relative;
+  opacity: 1;
+  transform: none;
+
+  animation: pageTurn 0.8s cubic-bezier(.22,.61,.36,1);
+
+  box-shadow:
+    2px 3px 8px rgba(60, 40, 20, 0.15),
+    inset 0 0 25px rgba(120, 90, 50, 0.08);
+}
+
+@keyframes pageTurn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) rotateY(8deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+    #bookMessages .love-card::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  width: 28px;
+  height: 28px;
+
+  background: linear-gradient(
+    135deg,
+    #d8bd91 0%,
+    #f3e4c4 45%,
+    #fff8e8 46%,
+    #fff8e8 100%
+  );
+
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+
+  box-shadow: -2px 2px 4px rgba(60, 40, 20, 0.15);
 }
 
 /* 古い紙っぽいページ */
