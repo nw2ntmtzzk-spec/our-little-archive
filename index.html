@@ -796,7 +796,7 @@ object-position: center top;
 
 </button>
 
-    </button>
+  
     
     <button class="menu-item" onclick="changePerson()">
    Log out
@@ -1306,7 +1306,7 @@ window.showLoveMessage = async function() {
         <br><br>
 
         <button
-          onclick="saveLoveToDiary('${love.id}')"
+          onclick="saveLoveToBook('${love.id}')"
           class="book-save-button"
         >
           📕 Keep this in my Diary
@@ -1500,54 +1500,7 @@ window.loadBook = async function() {
    Remove Love from My Love Diary
 ========================= */
 
-window.deleteLoveFromBook = async function(loveId) {
 
-  try {
-
-    const snapshot =
-      await getDocs(
-        collection(db, "savedLove")
-      );
-
-    let savedDocId = null;
-
-    snapshot.forEach(function(doc) {
-
-      const item = doc.data();
-
-      if (
-        item.loveId === loveId &&
-        item.person === document.body.dataset.person
-      ) {
-        savedDocId = doc.id;
-      }
-
-    });
-
-    if (!savedDocId) {
-      alert("This little love could not be found ♡");
-      return;
-    }
-
-    await deleteDoc(
-      doc(db, "savedLove", savedDocId)
-    );
-
-    alert("Removed from your diary♡");
-
-    loadBook();
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "Something went wrong while removing this love."
-    );
-
-  }
-
-};
   window.deleteLoveFromBook = async function(loveId) {
 
   try {
