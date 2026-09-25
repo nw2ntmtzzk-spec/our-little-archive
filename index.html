@@ -96,6 +96,33 @@
     button {
       -webkit-tap-highlight-color: transparent;
     }
+    /* Book opening animation */
+
+#bookMessages {
+  perspective: 1000px;
+}
+
+#bookMessages .love-card {
+  transform-origin: left center;
+  animation: pageOpen 0.8s ease-out;
+}
+
+@keyframes pageOpen {
+  0% {
+    opacity: 0;
+    transform: rotateY(-90deg);
+  }
+
+  60% {
+    opacity: 1;
+    transform: rotateY(15deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotateY(0deg);
+  }
+}
 
     /* =========================
        Login screen
@@ -708,7 +735,7 @@ object-position: center top;
     </button>
     
     <button class="menu-item" onclick="changePerson()">
-  ♡ Change person
+   Log out
 </button>
 
   </nav>
