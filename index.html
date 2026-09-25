@@ -97,21 +97,22 @@
       -webkit-tap-highlight-color: transparent;
     }
 /* =========================
-   Old Book Page Turn
+   My Love Diary — Right Page
 ========================= */
 
 #book {
-  position: sticky;
-  top: 20px;
-  
+  position: relative;
+
+  width: 100%;
+  min-height: 400px;
+
   background:
     linear-gradient(
       to right,
       #d8bd91 0%,
-      #f3e4c4 7%,
-      #f8efd9 50%,
-      #f3e4c4 93%,
-      #d8bd91 100%
+      #f3e4c4 5%,
+      #f8efd9 12%,
+      #f8efd9 100%
     );
 
   border: 1px solid #b89b70;
@@ -119,14 +120,12 @@
 
   box-shadow:
     8px 10px 20px rgba(60, 40, 20, 0.25),
-    inset 12px 0 18px rgba(80, 50, 25, 0.12),
-    inset -12px 0 18px rgba(80, 50, 25, 0.12);
+    inset 12px 0 18px rgba(80, 50, 25, 0.12);
 
   overflow: hidden;
 }
 
-
-
+/* 右ページの紙 */
 #bookMessages {
   position: relative;
   overflow: hidden;
@@ -134,8 +133,11 @@
   perspective: 1000px;
 }
 
+/* ページをめくる */
 #bookMessages .love-card {
   position: relative;
+
+  transform-origin: left center;
 
   animation:
     pageTurn 0.8s cubic-bezier(.22,.61,.36,1);
@@ -150,15 +152,8 @@
   0% {
     opacity: 0;
     transform:
-      translateX(-100%)
-      rotateY(-8deg);
-  }
-
-  45% {
-    opacity: 1;
-    transform:
-      translateX(-20%)
-      rotateY(-3deg);
+      translateX(100%)
+      rotateY(15deg);
   }
 
   100% {
@@ -169,7 +164,6 @@
   }
 
 }
-
     /* =========================
        Login screen
     ========================= */
