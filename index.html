@@ -1310,37 +1310,37 @@ window.loadBook = async function() {
     });
 
     bookMessages.innerHTML =
-     savedMessages.map(function(love) {
+  savedMessages.map(function(love) {
 
-  const date =
-    new Date(love.date)
-      .toLocaleDateString("en-GB");
+    const date =
+      new Date(love.date)
+        .toLocaleDateString("en-GB");
 
-  return `
-    <div class="love-card">
+    return `
+      <div class="love-card">
 
-      <p>
-        ${escapeHtml(love.message)}
-      </p>
+        <p>
+          ${escapeHtml(love.message)}
+        </p>
 
-      <small>
-        — ${escapeHtml(love.from)}
-        · ${date}
-      </small>
+        <small>
+          — ${escapeHtml(love.from)}
+          · ${date}
+        </small>
 
-      <br><br>
+        <br><br>
 
-      <button
-        onclick="deleteLoveFromBook('${love.loveId}')"
-        class="book-delete-button"
-      >
-        🗑️ Remove from my book
-      </button>
+        <button
+          onclick="deleteLoveFromBook('${love.loveId}')"
+          class="book-delete-button"
+        >
+          🗑️ Remove from my book
+        </button>
 
-    </div>
-  `;
+      </div>
+    `;
 
-}).join("");
+  }).join("");
   } catch (error) {
 
     console.error(error);
@@ -1389,6 +1389,52 @@ window.deleteLoveFromBook = async function(loveId) {
     );
 
     alert("Removed from your book ♡");
+
+    loadBook();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Something went wrong while removing this love."
+    );
+
+  }
+
+};
+  window.deleteLoveFromBook = async function(loveId) {
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        collection(db, "savedLove")
+      );
+
+    let savedDocId = null;
+
+    snapshot.forEach(function(doc) {
+
+      const item = doc.data();
+
+      if (
+        item.loveId === loveId &&
+        item.person === document.body.dataset.person
+      ) {
+        savedDocId = doc.id;
+      }
+
+    });
+
+    if (!savedDocId) {
+      alert("This little love could not be found ♡");
+      return;
+    }
+
+    await deleteDoc(
+      doc(db, "savedLove", savedDocId)
+    );
 
     loadBook();
 
